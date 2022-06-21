@@ -6,7 +6,7 @@
 
 安装方式:
     
-    右上角绿色的code按钮, download zip, 把nonebot_plugin_setu4文件夹解压出来放到他应该在的位置
+    pip install youth-version-of-setu4
 
 ## env 配置项
 
