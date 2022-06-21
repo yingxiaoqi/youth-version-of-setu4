@@ -7,6 +7,7 @@
 安装方式:
     
     pip install youth-version-of-setu4
+    
     记得nonebot.load_plugin("youth-version-of-setu4")
 
 ## env 配置项
