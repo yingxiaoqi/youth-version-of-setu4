@@ -11,7 +11,7 @@ ghs比较纯粹, 只有一般的权限控制, 相比完整版功能简单
     
     pip install youth-version-of-setu4
     
-    记得nonebot.load_plugin("youth_version_of_setu4")
+    记得nonebot.load_plugin("youth-version-of-setu4")
 
 ## env 配置项
 
