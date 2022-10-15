@@ -36,7 +36,7 @@ async def get_setu(keyword="", r18=False, num=1, quality=75) -> list:
     cur = conn.cursor()
     # sql操作,根据keyword和r18进行查询拿到数据
     cursor = cur.execute(
-        f"SELECT pid,title,author,r18,tags,urls from main where (tags like \'%{keyword}%\' or title like \'%{keyword}%\' or author like \'%{keyword}%\') and r18=\'{r18}\' order by random() limit {num}")
+        f"SELECT pid,p,title,author,r18,tags,urls from main where (tags like \'%{keyword}%\' or title like \'%{keyword}%\' or author like \'%{keyword}%\') and r18=\'{r18}\' order by random() limit {num}")
     db_data = cursor.fetchall()
     # 断开数据库连接
     conn.close()
@@ -57,11 +57,12 @@ async def get_setu(keyword="", r18=False, num=1, quality=75) -> list:
 # 返回setu消息列表,内容 [图片, 信息, True/False, url]
 async def pic(setu, quality, client):
     setu_pid = setu[0]                   # pid
-    setu_title = setu[1]                 # 标题
-    setu_author = setu[2]                # 作者
-    setu_r18 = setu[3]                   # r18
-    setu_tags = setu[4]                  # 标签
-    setu_url = setu[5].replace('i.pixiv.cat', 'i.pixiv.re')     # 图片url
+    setu_p = setu[1]                     # p
+    setu_title = setu[2]                 # 标题
+    setu_author = setu[3]                # 作者
+    setu_r18 = setu[4]                   # r18
+    setu_tags = setu[5]                  # 标签
+    setu_url = setu[6].replace('i.pixiv.cat', 'i.pixiv.re')     # 图片url
     
     data = (
         "标题:"
@@ -82,10 +83,41 @@ async def pic(setu, quality, client):
     if file_name in all_file_name:
         logger.info("图片本地存在")
         image = Image.open(save_path + "/" + file_name)
-    # 如果没有就down_pic
+    # 如果没有就下载
     else:
         logger.info("图片本地不存在,正在去i.pixiv.re下载")
-        content = await down_pic(setu_url, client)
+
+        """
+            2022-10-14:
+            这天下午通过i.pixiv.re反向代理下访问图片是空白内容, 然后根据pixiv.re的说明:
+            連結: https://pixiv.cat/Pixiv作品數字ID.jpg|png|gif
+            例如: https://pixiv.cat/82775556.jpg
+            連結: https://pixiv.cat/Pixiv作品數字ID-第幾張圖.jpg|png|gif
+            例如: https://pixiv.cat/78286152-2.png
+            可以访问到图片, 故对url进行了修改
+            圖片為動態產生，網址結尾副檔名部分無實際用途，準確檔案類型會以 Content-Type header 發送。
+            所以这里url统一用jpg, 后面可以用image.format获取图片格式
+        """
+
+
+        if setu_p ==0:
+            # 如果setu_p为0, 他可能是多图模式也可能是单图模式
+            # 如果是多图模式的话, download_url = f"https://pixiv.re/{setu_pid}-{int(setu_p)+1}.jpg"
+            # 如果是单图模式的话, download_url = f"https://pixiv.re/{setu_pid}.jpg"
+            # 这里我们无法判断到底是多图还是单图, 所以我们都请求一次, 直到返回状态码为200
+            # 根据downloadpic的返回值, 如果是int类型, 说明是状态码可能是404,408, 也就是下载失败
+            download_url = f"https://pixiv.re/{setu_pid}.jpg"
+            content = await down_pic(setu_url, client, download_url)
+            if type(content) == int:
+                download_url = f"https://pixiv.re/{setu_pid}-{int(setu_p)+1}.jpg"
+                content = await down_pic(setu_url, client, download_url)
+        else:
+            # 如果setu_p不为0的话, 那么说明铁定是多图模式, 又因为pixiv的p是从0开始计算的, 所以这里+1
+            download_url = f"https://pixiv.re/{setu_pid}-{int(setu_p)+1}.jpg"
+            content = await down_pic(setu_url, client, download_url)
+        
+        #  此次fix结束
+        
         if type(content) == int:
             return [error, f"图片下载失败, 状态码{content}", False, setu_url]
         image = Image.open(BytesIO(content))
@@ -107,14 +139,14 @@ async def change_pixel(image, quality):
 
 
 # 下载图片并且返回content,或者status_code
-async def down_pic(url, client):
+async def down_pic(url, client,download_url):
     headers = {
         "Referer": "https://accounts.pixiv.net/login?lang=zh&source=pc&view_type=page&ref=wwwtop_accounts_index",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
     }
     try:
-        re = await client.get(url=url, headers=headers, timeout=60)
+        re = await client.get(url=download_url, headers=headers, timeout=60)
         if re.status_code == 200:
             logger.success("成功获取图片")
             if save_path:

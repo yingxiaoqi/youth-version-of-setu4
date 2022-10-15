@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import (GROUP, PRIVATE_FRIEND, Bot,
                                          PrivateMessageEvent)
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
-from nonebot.params import CommandArg, State
+from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 from .get_data import get_setu
@@ -28,7 +28,7 @@ setu = on_regex(
 
 # 响应器处理操作
 @setu.handle()
-async def _(bot: Bot, event: MessageEvent, state: T_State = State()):
+async def _(bot: Bot, event: MessageEvent, state: T_State):
     args = list(state["_matched_groups"])
     r18flag = args[2]
     key = args[3]
