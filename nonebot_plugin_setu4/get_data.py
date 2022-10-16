@@ -119,6 +119,7 @@ async def pic(setu, quality, client):
         #  此次fix结束
         
         if type(content) == int:
+            logger.error(f"图片下载失败, 状态码: {content}")
             return [error, f"图片下载失败, 状态码{content}", False, setu_url]
         image = Image.open(BytesIO(content))
 
@@ -126,14 +127,13 @@ async def pic(setu, quality, client):
     return [pic, data, True, setu_url]
 
 
-# 随机修改左上角第一颗像素的颜色,并且返还图片的base64编码
+# 图片左右镜像
 async def change_pixel(image, quality):
+    image = image.transpose(Image.FLIP_LEFT_RIGHT)
     image = image.convert("RGB")
-    image.load()[0, 0] = (random.randint(0, 255),
-                          random.randint(0, 255), random.randint(0, 255))
     byte_data = BytesIO()
     image.save(byte_data, format="JPEG", quality=quality)
-    # pic是的图片的base64编码
+    # pic是的图片的bytes
     pic = byte_data.getvalue()
     return pic
 
@@ -159,8 +159,6 @@ async def down_pic(url, client,download_url):
                     logger.error(f'图片存储失败: {e}')
             return re.content
         else:
-            logger.error(f"获取图片失败: {re.status_code}")
             return re.status_code
     except:
-        logger.error("Http访问超时")
         return 408
