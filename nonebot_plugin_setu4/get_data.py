@@ -131,6 +131,8 @@ async def pic(setu, quality, client):
 async def change_pixel(image, quality):
     image = image.transpose(Image.FLIP_LEFT_RIGHT)
     image = image.convert("RGB")
+    image.load()[0, 0] = (random.randint(0, 255),
+                          random.randint(0, 255), random.randint(0, 255))
     byte_data = BytesIO()
     image.save(byte_data, format="JPEG", quality=quality)
     # pic是的图片的bytes
