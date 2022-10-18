@@ -97,6 +97,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
             if pic[2]:
                 message = f"{random.choice(setu_sendmessage)}{flagLog}" + \
                     Message(pic[1]) + MessageSegment.image(pic[0])
+                flagLog = ""
                 message_list.append(message)
             # 状态为false的消息,图片没拿到
             else:
