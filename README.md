@@ -24,11 +24,22 @@ ghs比较纯粹, 只有一般的权限控制, 相比完整版功能简单
 |setu_withdraw_time |int             |100    |setu_withdraw_time = 30          |setu撤回时间           |
 |setu_max_num       |int             |10     |setu_max_num = 20                |setu一次性最大数量     |
 |setu_save          |str             |None   |setu_save = './data/setu4/img'   |setu时候保存到本地的路径  可用绝对路径|
+|setu_proxy         |str             |px2.rainchan.win|setu_proxy = "i.pixiv.re" |下载图片的代理(一般我会把可用的代理设置成默认)|
 
 setu_save保存后下一次调用碰到这个setu就不需要再下载
 
-一般无需科学上网, 目前使用的代理为: sex.nyan.xyz
-如不可用请及时提issue
+
+一般无需科学上网, 确认一下图片代理是否可用:    
+
+    数据库给的url为: https://i.pixiv.re/img-original/img/2022/07/09/18/51/03/99606781_p0.jpg
+    
+    i.pixiv.re近日(2022.10)不可用, 把i.pixiv.re换成可用的代理, 比如px2.rainchan.win
+    
+    即: https://px2.rainchan.win/img-original/img/2022/07/09/18/51/03/99606781_p0.jpg
+    
+    能正常访问即可用
+    
+    
 
 ## 插件指令
 
