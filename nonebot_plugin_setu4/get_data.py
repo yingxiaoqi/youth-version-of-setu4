@@ -11,6 +11,11 @@ from io import BytesIO
 error = "Error:"
 
 
+# setu下载的代理
+try:
+    setu_proxy = nonebot.get_driver().config.setu_proxy
+except:
+    setu_proxy = 'px2.rainchan.win'
 # save_path,可在env设置, 默认False, 类型bool或str
 try:
     save_path = nonebot.get_driver().config.setu_save
@@ -61,7 +66,7 @@ async def pic(setu, quality, client):
     setu_author = setu[2]                # 作者
     setu_r18 = setu[3]                   # r18
     setu_tags = setu[4]                  # 标签
-    setu_url = setu[5].replace('i.pixiv.re',"sex.nyan.xyz")     # 图片url
+    setu_url = setu[5].replace('i.pixiv.re',setu_proxy)     # 图片url
     
     data = (
         "标题:"
@@ -84,7 +89,7 @@ async def pic(setu, quality, client):
         image = Image.open(save_path + "/" + file_name)
     # 如果没有就下载
     else:
-        logger.info("图片本地不存在,正在去sex.nyan.xyz下载")
+        logger.info(f"图片本地不存在,正在去{setu_proxy}下载")
 
         content = await down_pic(setu_url, client)
         

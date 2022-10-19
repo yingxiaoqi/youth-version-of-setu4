@@ -29,6 +29,9 @@ except:
     max_num = 10
 
 
+
+
+
 # 先读一读试试
 try:
     fp = open('data/youth-version-of-setu4/r18list.txt')
