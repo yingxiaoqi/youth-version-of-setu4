@@ -15,7 +15,7 @@ error = "Error:"
 try:
     setu_proxy = nonebot.get_driver().config.setu_proxy
 except:
-    setu_proxy = 'px2.rainchan.win'
+    setu_proxy = 'i.pixiv.re'
 # save_path,可在env设置, 默认False, 类型bool或str
 try:
     save_path = nonebot.get_driver().config.setu_save
