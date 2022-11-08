@@ -99,8 +99,11 @@ async def pic(setu, quality, client):
             logger.error(f"图片下载失败, 状态码: {content}")
             return [error, f"图片下载失败, 状态码{content}", False, setu_url]
         image = Image.open(BytesIO(content))
-
-    pic = await change_pixel(image, quality)
+    try:
+        pic = await change_pixel(image, quality)
+    except:
+        logger.error("图片处理失败")
+        return [error, "图片处理失败", False, setu_url]
     return [pic, data, True, setu_url]
 
 
