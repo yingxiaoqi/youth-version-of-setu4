@@ -111,7 +111,7 @@ async def _(bot: Bot, event: MessageEvent, state: T_State):
             if isinstance(event, PrivateMessageEvent):
                 # 私聊直接发送
                 for msg in message_list:
-                    setu_msg_id.append((await setu.send(msg))['message_id'])    # 我超这串代码好丑啊
+                    setu_msg_id.append((await setu.send(msg))['message_id']) 
             elif isinstance(event, GroupMessageEvent):
                 # 群聊以转发消息的方式发送
                 msgs = [to_json(msg, "setu-bot", bot.self_id)
